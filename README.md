@@ -15,3 +15,16 @@ You will code in Python and perform Apriltag detection on your webcam! At the sa
 2. Optionally, record data into mcap format
 
 
+## Installation
+
+### Virtual Box Download
+
+https://www.virtualbox.org/wiki/Downloads
+
+### Ubuntu 22.04 Image
+
+https://www.releases.ubuntu.com/22.04/
+
+Use the desktop image
+
+
