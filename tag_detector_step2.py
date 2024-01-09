@@ -22,7 +22,14 @@ def main():
         for detection in detections:
             if detection.hamming > 0:
                 continue
-            print(detection)
+            print(detection.tag_id)
+            print(detection.corners)
+
+            cv2.polylines(frame, [detection.corners.astype(int)], True, (0, 255, 0), 2)
+
+            # Draw the corners of the tag
+            for corner in detection.corners:
+                cv2.circle(frame, tuple(corner.astype(int)), 5, (0, 0, 255), -1)
 
         # Display the resulting frame
         cv2.imshow('AprilTag Detection', frame)
