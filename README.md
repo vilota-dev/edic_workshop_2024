@@ -45,3 +45,13 @@ https://askubuntu.com/a/894507
 pip3 install pyapriltags
 ```
 
+
+## Intall eCAL
+
+```
+sudo add-apt-repository ppa:ecal/ecal-5.12
+sudo apt-get update
+sudo apt-get install ecal
+
+sudo apt install python3-ecal5
+```
