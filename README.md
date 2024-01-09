@@ -21,10 +21,27 @@ You will code in Python and perform Apriltag detection on your webcam! At the sa
 
 https://www.virtualbox.org/wiki/Downloads
 
+
+#### Install Extension Pack
+
+https://scribles.net/using-webcam-in-virtualbox-guest-os-on-windows-host/
+
 ### Ubuntu 22.04 Image
 
 https://www.releases.ubuntu.com/22.04/
 
 Use the desktop image
 
+
+
+## Bring up Webcam in VirtualBox Ubuntu Client, Windows Host
+
+https://askubuntu.com/a/894507
+
+
+## Tag Detection Using Apriltag Lib and OpenCV
+
+```
+pip3 install pyapriltags
+```
 
