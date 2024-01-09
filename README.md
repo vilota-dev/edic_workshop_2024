@@ -55,3 +55,14 @@ sudo apt-get install ecal
 
 sudo apt install python3-ecal5
 ```
+
+
+## Install rerun.io and run visualiser code
+
+```
+pip3 install rerun-sdk
+```
+
+```
+https://github.com/vilota-dev/vk-viewer
+```
