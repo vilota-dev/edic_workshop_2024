@@ -5,6 +5,7 @@ import capnp # pip3 install pycapnp
 capnp.add_import_hook(['./capnp'])
 
 import tagdetection_capnp as TagDetection
+import image_capnp as Image
 
 import numpy as np
 
@@ -31,7 +32,8 @@ def main():
     # Open the webcam (you may need to adjust the camera index)
     cap = cv2.VideoCapture(0)
 
-    pub = CapnpPublisher("tag_detection", "TagDetections")
+    pub = CapnpPublisher("S0/cama/tags", "TagDetections")
+    pubImage = CapnpPublisher("S0/cama", "Image")
 
     while True:
         # Capture frame-by-frame
@@ -45,10 +47,26 @@ def main():
 
         # Draw bounding boxes around detected tags
         msg = TagDetection.TagDetections.new_message()
-        tags = msg.init('tags', len(detections))
+
+        num_detections = 0
+        for detection in detections:
+            if detection.hamming > 0:
+                continue
+            num_detections += 1
+
+        tags = msg.init('tags', num_detections)
 
         msg.image.width = frame.shape[1]
         msg.image.height = frame.shape[0]
+
+        msgImage = Image.Image.new_message()
+        msgImage.width = frame.shape[1]
+        msgImage.height = frame.shape[0]
+        # data = msgImage.init('data', len(frame))
+        # data = frame
+        msgImage.data = frame.tobytes()
+        msgImage.encoding = Image.Image.Encoding.bgr8
+        msgImage.mipMapLevels = 0
 
         count = 0
         for detection in detections:
@@ -80,6 +98,7 @@ def main():
             count += 1
 
         pub.send(msg.to_bytes())
+        pubImage.send(msgImage.to_bytes())
 
         # Display the resulting frame
         cv2.imshow('AprilTag Detection', frame)
