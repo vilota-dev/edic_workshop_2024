@@ -1,6 +1,11 @@
 import cv2
 from pyapriltags import apriltags
 
+import capnp # pip3 install pycapnp
+capnp.add_import_hook(['./capnp'])
+
+import tagdetection_capnp as TagDetection
+
 
 def main():
     detector = apriltags.Detector(families='tag16h5')
@@ -19,6 +24,10 @@ def main():
         detections = detector.detect(gray)
 
         # Draw bounding boxes around detected tags
+        msg = TagDetection.TagDetections.new_message()
+        tags = msg.init('tags', len(detections))
+
+        count = 0
         for detection in detections:
             if detection.hamming > 0:
                 continue
@@ -30,6 +39,11 @@ def main():
             # Draw the corners of the tag
             for corner in detection.corners:
                 cv2.circle(frame, tuple(corner.astype(int)), 5, (0, 0, 255), -1)
+
+            
+            tags[count].id = detection.tag_id
+
+            count += 1
 
         # Display the resulting frame
         cv2.imshow('AprilTag Detection', frame)
