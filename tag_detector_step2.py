@@ -15,6 +15,10 @@ import sys
 # from capnp_subscriber import CapnpSubscriber
 from capnp_publisher import CapnpPublisher
 
+
+# visualisation deps
+import rerun as rr
+
 def main():
 
 
@@ -25,6 +29,10 @@ def main():
     
     # set process state
     ecal_core.set_process_state(1, 1, "I feel good")
+
+    # initialise visualiser
+    rr.init("rerun_tag_detector")
+    rr.spawn(memory_limit="1GB")
 
 
     detector = apriltags.Detector(families='tag16h5')
@@ -68,12 +76,20 @@ def main():
         msgImage.encoding = Image.Image.Encoding.bgr8
         msgImage.mipMapLevels = 0
 
+        # convert from OpenCV BGR to RGB
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        rr.log("webcam/image", rr.Image(frame_rgb))
+
         count = 0
+        corners_list = list()
+        ids_list = list()
         for detection in detections:
             if detection.hamming > 0:
                 continue
-            print(detection.tag_id)
+            # print(detection.tag_id)
             # print(detection.corners)
+            corners_list.append(np.vstack([detection.corners, detection.corners[0, :]]))
+            ids_list.append(detection.tag_id)
 
             cv2.polylines(frame, [detection.corners.astype(int)], True, (0, 255, 0), 2)
 
@@ -96,6 +112,9 @@ def main():
             tags[count].family = TagDetection.TagFamily.tag16h5
 
             count += 1
+
+        # logging to visualiser, with ability to show labels for each tag id
+        rr.log("webcam/tags", rr.LineStrips2D(corners_list, labels=ids_list))
 
         pub.send(msg.to_bytes())
         pubImage.send(msgImage.to_bytes())
